@@ -55,4 +55,4 @@ conan_basic_setup()''')
 		self.copy("*.a", dst="lib", src="", keep_path=False)
 
 	def package_info(self):
-		self.cpp_info.libs = ["libg3logger"]
+		self.cpp_info.libs = ["g3logger"]

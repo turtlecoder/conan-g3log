@@ -14,6 +14,7 @@ class G3logTestConan(ConanFile):
 
 	def configure(self):
 		self.options["g3log"].shared = self.options.shared
+		print("Testing shared library: %s" % self.options.shared)
 
 	def build(self):
 		cmake = CMake(self.settings)
