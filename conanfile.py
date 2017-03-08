@@ -25,7 +25,7 @@ class G3logConan(ConanFile):
 		#self.run("cd hello && git checkout static_shared")
 		# This small hack might be useful to guarantee proper /MT /MD linkage in MSVC
 		# if the packaged project doesn't have variables to set it properly
-		tools.replace_in_file("g3log/CMakeLists.txt", "PROJECT(g3log)", '''PROJECT(g3log)
+		tools.replace_in_file("g3log/CMakeLists.txt", "project (g3log)", '''project (g3log)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()''')
 
@@ -48,11 +48,11 @@ conan_basic_setup()''')
 
 	def package(self):
 		self.copy("*.hpp", dst="include", src="g3log/src")
-		self.copy("*.lib", dst="lib", src="Release", keep_path=False)
-		self.copy("*.exp", dst="lib", src="Release", keep_path=False)
-		self.copy("*.dll", dst="bin", src="Release", keep_path=False) #shared lib
-		self.copy("*.so", dst="lib", src="", keep_path=False)
-		self.copy("*.a", dst="lib", src="", keep_path=False)
+		self.copy("*.lib", dst="lib", keep_path=False)
+		self.copy("*.exp", dst="lib", keep_path=False)
+		self.copy("*.dll", dst="bin", keep_path=False) #shared lib
+		self.copy("*.so", dst="lib", keep_path=False)
+		self.copy("*.a", dst="lib", keep_path=False)
 
 	def package_info(self):
 		self.cpp_info.libs = ["g3logger"]
