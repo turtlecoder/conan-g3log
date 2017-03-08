@@ -6,7 +6,8 @@ class G3logConan(ConanFile):
 	name = "g3log"
 	version = "master"
 	license = "Unlicense"
-	url = "<Package recipe repository url here, for issues about the package>"
+	url = "https://github.com/Brunni/conan-g3log"
+	description = "G3log is an asynchronous, crash safe, logger that is easy to use with default logging sinks or you can add your own."
 	settings = "os", "compiler", "build_type", "arch"
 	options = {"shared": [True, False]}
 	default_options = "shared=False"
