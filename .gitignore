@@ -7,3 +7,5 @@ install_manifest.txt
 CTestTestfile.cmake
 __pycache__/
 test_package/build/
+build/
+*.pyc

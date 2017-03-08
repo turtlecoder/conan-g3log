@@ -56,3 +56,5 @@ conan_basic_setup()''')
 
 	def package_info(self):
 		self.cpp_info.libs = ["g3logger"]
+		if self.settings.os == "Linux":
+			self.cpp_info.libs.append("pthread")
