@@ -10,8 +10,10 @@ class G3logTestConan(ConanFile):
 	settings = "os", "compiler", "build_type", "arch"
 	requires = "g3log/master@%s/%s" % (username, channel)
 	options = {"shared": [True, False]}
-	options[g3log].shared = self.shared
 	generators = "cmake"
+
+	def configure(self):
+		self.options["g3log"].shared = self.options.shared
 
 	def build(self):
 		cmake = CMake(self.settings)

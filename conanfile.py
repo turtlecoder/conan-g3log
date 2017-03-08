@@ -51,8 +51,8 @@ conan_basic_setup()''')
 		self.copy("*.lib", dst="lib", src="Release", keep_path=False)
 		self.copy("*.exp", dst="lib", src="Release", keep_path=False)
 		self.copy("*.dll", dst="bin", src="Release", keep_path=False) #shared lib
-		self.copy("*.so", dst="lib", src="Release", keep_path=False)
-		self.copy("*.a", dst="lib", src="Release", keep_path=False)
+		self.copy("*.so", dst="lib", src="", keep_path=False)
+		self.copy("*.a", dst="lib", src="", keep_path=False)
 
 	def package_info(self):
-		self.cpp_info.libs = ["g3logger"]
+		self.cpp_info.libs = ["libg3logger"]
