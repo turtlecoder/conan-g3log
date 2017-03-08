@@ -1,7 +1,6 @@
 from conans import ConanFile, CMake, tools
 import os
 
-
 class G3logConan(ConanFile):
 	name = "g3log"
 	version = "master"
@@ -17,6 +16,9 @@ class G3logConan(ConanFile):
 		if self.scope.dev and self.scope.build_tests:
 			self.requires( "gtest/1.8.0@lasote/stable" )
 			self.options["gtest"].shared = False
+		print("Description is: %s" % self.description)
+		print("default_option is: %s" % self.default_options)
+		print("shared is: %s" % self.options.shared)
 
 	def source(self):
 		self.run("git clone --depth 1 https://github.com/KjellKod/g3log.git")
@@ -31,17 +33,26 @@ conan_basic_setup()''')
 		cmake = CMake(self.settings)
 		cmake_opts = "-DUSE_CONAN=True "
 		cmake_opts += "-DADD_G3LOG_UNIT_TEST=True " if self.scope.dev and self.scope.build_tests else ""
-		cmake_opts += "-DBUILD_SHARED_LIBS=ON " if self.options.shared else ""
+		if self.options.shared:
+			print("Building shared lib only")
+			target = "g3logger_shared"
+			cmake_opts += "-DADD_BUILD_WIN_SHARED=True "
+		else:
+			print("Building static lib only")
+			target = "g3logger"
+		
+		cmake_opts += "-DADD_FATAL_EXAMPLE=OFF "
 		self.run('cmake %s/g3log %s %s' % (self.conanfile_directory, cmake.command_line, cmake_opts))
-		self.run("cmake --build . %s" % cmake.build_config)
+		# We need to prevent to build static library as well when building shared. It might overwrite the lib file!
+		self.run("cmake --build . %s --target %s" % (cmake.build_config, target))
 
 	def package(self):
 		self.copy("*.hpp", dst="include", src="g3log/src")
 		self.copy("*.lib", dst="lib", src="Release", keep_path=False)
-		self.copy("*.lib", dst="lib", src="Debug", keep_path=False)
-		#self.copy("*.dll", dst="bin", keep_path=False) #no shared lib
+		self.copy("*.exp", dst="lib", src="Release", keep_path=False)
+		self.copy("*.dll", dst="bin", src="Release", keep_path=False) #shared lib
 		self.copy("*.so", dst="lib", src="Release", keep_path=False)
-		self.copy("*.a", dst="lib", src="Debug", keep_path=False)
+		self.copy("*.a", dst="lib", src="Release", keep_path=False)
 
 	def package_info(self):
 		self.cpp_info.libs = ["g3logger"]
