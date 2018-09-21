@@ -11,14 +11,29 @@ class G3logConan(ConanFile):
     commit = "master"
     description = "G3log is an asynchronous, crash safe, logger that is easy to use with default logging sinks or you can add your own."
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
+    options = {"shared": [True, False],
+               "debug": [True, False],
+               "dev": [True, False],
+               "build_tests": [True, False]}
+    default_options = ("shared=False",
+                       "debug=False",
+                       "build_tests=True",
+                       "dev=True")
     generators = "cmake"
+    requires = "gtest/1.8.0@bincrafters/stable"
+    
+    # def config(self):
+    #     if self.scope.dev and self.scope.build_tests:
+    #         self.requires("gtest/1.8.0@lasote/stable")
+    #         self.options["gtest"].shared = False
+    def configure(self):
+        # if not(self.options.dev and self.options.build_test):
+        #     # self.requires.remove("gtest/1.8.0@bincrafters/stable")
+        pass
 
-    def config(self):
-        if self.scope.dev and self.scope.build_tests:
-            self.requires("gtest/1.8.0@lasote/stable")
-            self.options["gtest"].shared = False
+
+    def config_options(self):
+        pass
 
     def source(self):
         if not os.path.isdir('g3log'):
