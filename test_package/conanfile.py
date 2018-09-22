@@ -1,8 +1,8 @@
 from conans import ConanFile, CMake
 import os
 
-channel = os.getenv("CONAN_CHANNEL", "testing")
-username = os.getenv("CONAN_USERNAME", "oskargargas")
+channel = os.getenv("CONAN_CHANNEL", "local")
+username = os.getenv("CONAN_USERNAME", "user")
 
 
 class G3logTestConan(ConanFile):
@@ -14,8 +14,8 @@ class G3logTestConan(ConanFile):
         print("Testing shared library: %s" % self.options["g3log"].shared)
 
     def build(self):
-        cmake = CMake(self.settings)
-        self.run('cmake "%s" %s' % (self.conanfile_directory, cmake.command_line))
+        cmake = CMake(self)
+        self.run('cmake "%s" %s' % (self.source_folder, cmake.command_line))
         self.run("cmake --build . %s" % cmake.build_config)
 
     def imports(self):
