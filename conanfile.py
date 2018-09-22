@@ -14,11 +14,13 @@ class G3logConan(ConanFile):
     options = {"shared": [True, False],
                "debug": [True, False],
                "dev": [True, False],
-               "build_tests": [True, False]}
+               "build_tests": [True, False],
+               "dynamic_logging_levels": [True, False]}
     default_options = ("shared=False",
                        "debug=False",
                        "build_tests=True",
-                       "dev=True")
+                       "dev=True",
+                       "dynamic_logging_levels=True")
     generators = "cmake"
     requires = "gtest/1.8.0@bincrafters/stable"
     
@@ -48,21 +50,35 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()''')
 
     def build(self):
-        cmake = CMake(self.settings)
+        # cmake = CMake(self.settings)
+        cmake = CMake(self)
 
-        cmake_opts = "-DADD_G3LOG_UNIT_TEST=True " if self.scope.dev and self.scope.build_tests else ""
+        cmake_opts = "-DADD_G3LOG_UNIT_TEST=True " if not (self.options.dev and self.options.build_tests) else ""
         cmake_opts += "-DBUILD_EXAMPLES:BOOL=False "
         cmake_opts += "-DADD_FATAL_EXAMPLE=OFF "
         if self.settings.os == "Macos":
             cmake_opts += "-DCMAKE_SKIP_RPATH:BOOL=ON "
 
+        # if self.options.shared:
+        #     target = "g3logger_shared"
+        #     cmake_opts += "-DADD_BUILD_WIN_SHARED=True "
+        # else:
+        #     target = "g3logger"
         if self.options.shared:
-            target = "g3logger_shared"
-            cmake_opts += "-DADD_BUILD_WIN_SHARED=True "
+            target = 'g3logger_shared'
+            cmake.definitions['ADD_BUILD_WIN_SHARED']=True
         else:
-            target = "g3logger"
+            target = 'g3logger'
+            cmake.definitions['ADD_BUILD_WIN_SHARED']=False
+            cmake.definitions['G3_SHARED_LIB']=False
 
-        self.run('cmake "%s/g3log" %s %s' % (self.conanfile_directory, cmake.command_line, cmake_opts))
+        if self.options.debug:
+            cmake_opts += "-DCMAKE_BUILD_TYPE=Debug "
+
+        if self.options.dynamic_logging_levels:
+            cmake_opts += "-DUSE_DYNAMIC_LOGGING_LEVELS=ON "
+            
+        self.run('cmake "%s/g3log" %s %s' % (self.source_folder, cmake.command_line, cmake_opts))
         self.run('cmake --build . %s --target %s' % (cmake.build_config, target))
 
     def package(self):
